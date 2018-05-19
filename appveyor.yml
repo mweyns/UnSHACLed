@@ -7,10 +7,9 @@ environment:
 
 # Install scripts. These runs after repo cloning.
 install:
-  # Install Chrome and Opera for testing purposes.
+  # Install Chrome for testing purposes.
   # Firefox should already be installed.
-  - choco install googlechrome
-  - choco install opera
+  - choco install --ignore-checksum googlechrome
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
   # Output useful info for debugging.
@@ -20,6 +19,8 @@ install:
   - npm install
   # Install gulp.
   - npm install -g gulp
+  # Install serve for running the Selenium tests.
+  - npm install -g serve@6.5.3
 
 # Build scripts. These run after installation.
 build_script:
@@ -28,5 +29,5 @@ build_script:
 
 # Post-install test scripts.
 test_script:
-  # run tests
+  # Run tests.
   - gulp test

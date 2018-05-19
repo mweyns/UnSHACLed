@@ -1,16 +1,37 @@
+const babelConfig = require("./babel-config");
+
 module.exports = function(config) {
     config.set({
         frameworks: ["jasmine", "karma-typescript", "detectBrowsers"],
         files: [
-            { pattern: "source/**/*.ts" },
-            { pattern: "test/**/*.ts" }
+            { pattern: "src/**/*.ts" },
+            { pattern: "src/components/**/*.tsx" },
+            { pattern: "src/form/**/*.tsx" },
+            { pattern: "src/pages/**/*.tsx" },
+            { pattern: "src/services/**/*.tsx" },
+            { pattern: "src/dropdowns/**/*.tsx" },
+            { pattern: "src/modals/**/*.tsx" },
+            { pattern: "src/requests/**/*.tsx" },
+            { pattern: "test/**/*.ts" },
         ],
 
         preprocessors: {
-            "**/*.ts": ["karma-typescript"]
+            "**/*.ts": ["karma-typescript"],
+            "**/*.tsx": ["karma-typescript"],
         },
 
         karmaTypescriptConfig: {
+            bundlerOptions: {
+                resolve: {
+                    directories: [
+                        "dependency-overrides",
+                        "node_modules"
+                    ]
+                },
+                transforms: [
+                    require("karma-typescript-es6-transform")(babelConfig)
+                ]
+            },
             reports:
             {
                 "lcovonly": {
@@ -31,7 +52,7 @@ module.exports = function(config) {
             enabled: true,
 
             // enable/disable phantomjs support, default is true
-            usePhantomJS: true,
+            usePhantomJS: false,
 
             // post processing of browsers list
             // here you can edit the list of browsers used by karma
@@ -60,9 +81,11 @@ module.exports = function(config) {
                 //
                 // During CI builds, we'll just make sure Chrome's actually installed if
                 // karma-detect-browser advertises it.
-                let undesirables = process.env.CI.toLowerCase() == "true"
-                    ? ['PhantomJS']
-                    : ['PhantomJS', 'Chrome'];
+                let undesirables = ["PhantomJS", "IE", "Edge"];
+                if (!process.env.CI) {
+                    //undesirables.push("Chrome");
+                    undesirables.push("Chrome");
+                }
 
                 // Remove undesirables if another browser has been detected.
                 for (let i = 0; i < undesirables.length; i++) {
